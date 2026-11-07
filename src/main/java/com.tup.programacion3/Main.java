@@ -23,7 +23,7 @@ import java.util.Scanner;
 
 import java.time.LocalDate;
 import java.util.*;
-
+SonarLint
 public class Main {
     private static final CategoriaRepository categoriaRepo = new CategoriaRepository();
     private static final ProductoRepository productoRepo = new ProductoRepository();
