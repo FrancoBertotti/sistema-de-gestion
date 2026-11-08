@@ -29,6 +29,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
+
 test {
     useJUnitPlatform()
+    workingDir = layout.buildDirectory.dir('test-db').get().asFile
+    doFirst {
+        delete workingDir
+        workingDir.mkdirs()
+    }
 }
