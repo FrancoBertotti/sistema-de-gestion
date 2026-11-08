@@ -1,10 +1,11 @@
 package com.tup.programacion3.repository;
 
-import com.tup.programacion3.util.JPAUtil; 
+import com.tup.programacion3.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public abstract class BaseRepository<T> {
 
@@ -36,35 +37,18 @@ public abstract class BaseRepository<T> {
         }
     }
 
-    //buscarPorId
+    // buscarPorId
     public Optional<T> buscarPorId(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            T entity = em.find(miClass, id);
-            return Optional.ofNullable(entity);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
-    }
+    return ejecutarConsulta(em -> Optional.ofNullable(em.find(miClass, id)));
+}
 
-    //listarActivos()
-    @SuppressWarnings("unchecked")
+    // listarActivos()
     public List<T> listarActivos() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            //consulta JPQL usando el nombre dinámico de la clase
-            String jpql = "FROM " + miClass.getSimpleName() + " e WHERE e.eliminado = false";
-            return em.createQuery(jpql, miClass).getResultList();
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
+        String jpql = "FROM " + miClass.getSimpleName() + " e WHERE e.eliminado = false";
+        return ejecutarConsulta(em -> em.createQuery(jpql, miClass).getResultList());
     }
 
-    //eliminarLogico
+    // eliminarLogico
     public boolean eliminarLogico(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -92,6 +76,17 @@ public abstract class BaseRepository<T> {
                 tx.rollback();
             }
             throw new RuntimeException("Error en el borrado lógico, no se encontro el registro: " + e.getMessage(), e);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    protected <R> R ejecutarConsulta(Function<EntityManager, R> consulta) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return consulta.apply(em);
         } finally {
             if (em != null && em.isOpen()) {
                 em.close();
