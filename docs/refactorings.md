@@ -32,3 +32,19 @@
 **Verificación de comportamiento:** [pedido de 2 unidades: se imprimió la confirmación y el stock bajó 2 unidades]. [Pedido con stock insuficiente: mismo mensaje de error y el stock no cambió]. `./gradlew test`: 8/8 en verde.
 
 **Resultado:** [Main.java quedó con 31 líneas menos]. Los `em.close()` de Main pasaron a PedidoService.
+
+## Refactoring 4: Introduce Parameter Object (SolicitudPedido)
+
+**Code smell detectado:** Data Clumps / Long Parameter List. `crearPedido` recibía tres datos que siempre viajan juntos (usuario, forma de pago, ítems). Cualquier dato nuevo del pedido obligaba a cambiar la firma y todas las llamadas.
+
+**Técnica aplicada:** Introduce Parameter Object. Se creó el record `SolicitudPedido(usuario, formaPago, items)` y `crearPedido` pasó a recibir un único parámetro.
+
+**Principio:** Clean Code (funciones con pocos argumentos) y Open/Closed: el servicio queda abierto a nuevos datos del pedido sin romper su interfaz.
+
+**Antes:** `crearPedido(Usuario usuario, FormaPago formaPago, List<ItemPedido> items)`. Evidencia: Screenshot21.
+
+**Después:** `crearPedido(SolicitudPedido solicitud)`, con la llamada armada en `Main.altaPedido()`. Evidencia: Screenshot21 y 22.
+
+**Verificación de comportamiento:** `./gradlew test` en 8/8 y pedido de 2 unidades con confirmación y stock descontado, igual que antes.
+
+**Limitación:** hoy son solo tres parámetros, así que el beneficio es modesto. Se aplicó pensando en la evolución del sistema y para practicar la técnica.
