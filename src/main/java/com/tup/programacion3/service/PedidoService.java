@@ -14,20 +14,20 @@ import com.tup.programacion3.model.enums.FormaPago;
 
 public class PedidoService {
 
-    public Pedido crearPedido(Usuario usuario, FormaPago formaPago, List<ItemPedido> items) {
+    public Pedido crearPedido(SolicitudPedido solicitud) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
             Pedido nuevoPedido = new Pedido();
-            nuevoPedido.setUsuario(em.merge(usuario));
+            nuevoPedido.setUsuario(em.merge(solicitud.usuario()));
             nuevoPedido.setFecha(LocalDate.now());
             nuevoPedido.setEstado(Estado.PENDIENTE);
-            nuevoPedido.setFormaPago(formaPago);
+            nuevoPedido.setFormaPago(solicitud.formaPago());
             nuevoPedido.setEliminado(false);
 
             // Procesar cada producto
-            for (ItemPedido item : items) {
+            for (ItemPedido item : solicitud.items()) {
                 Producto prodManaged = em.find(Producto.class, item.idProducto());
 
                 if (prodManaged.getStock() < item.cantidad()) {

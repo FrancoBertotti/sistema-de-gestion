@@ -8,6 +8,7 @@ import jakarta.persistence.EntityTransaction;
 import com.tup.programacion3.repository.UsuarioRepository;
 import com.tup.programacion3.service.ItemPedido;
 import com.tup.programacion3.service.PedidoService;
+import com.tup.programacion3.service.SolicitudPedido;
 import com.tup.programacion3.repository.PedidoRepository;
 import com.tup.programacion3.model.entities.Categoria;
 import com.tup.programacion3.model.entities.Producto;
@@ -976,7 +977,9 @@ public class Main {
             return;
         }
         try {
-            Pedido nuevoPedido = pedidoService.crearPedido(usuarioSelec.get(), formaPagoSelec, productosTemp);
+            SolicitudPedido solicitud = new SolicitudPedido(usuarioSelec.get(), formaPagoSelec, productosTemp);
+            Pedido nuevoPedido = pedidoService.crearPedido(solicitud);
+
 
             // Mostrar confirmación
             System.out.println("\n=== PEDIDO CREADO EXITOSAMENTE ===");
