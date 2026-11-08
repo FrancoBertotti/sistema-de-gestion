@@ -111,7 +111,7 @@ No hay forma automática de verificar el comportamiento ni de comprobar que un r
 # Gravedad
 Alta
 # Evidencia
-Carpeta src/test/java vacía
+Carpeta src/test/java vacía (en el estado inicial)
 
 ---
 
@@ -125,3 +125,16 @@ La fábrica de conexiones es estática y se cierra al volver al menú principal;
 Alta
 # Evidencia
 Prueba manual: entrar a Reportes, volver con 0 y listar categorías; el programa se cae, "Screenshot7"
+
+---
+
+# Problema
+11 Las líneas de pedido iguales se pierden al agregarse
+# Dónde
+Pedido.java (campo detalles y addDetallePedido), DetallePedido.java (equals/hashCode) y Main.java (altaPedido)
+# Por qué es un problema
+Pedido.detalles es un Set y el equals/hashCode de DetallePedido ignora producto y pedido: dos líneas con la misma cantidad y el mismo subtotal se consideran iguales y se guarda una sola, así que el pedido pierde una línea y su total queda incorrecto
+# Gravedad
+Alta
+# Evidencia
+Hallazgo de la etapa de pruebas: PedidoTest esperaba 2 detalles y total 400 y obtuvo 1 detalle y total 200, "Screenshot9" y "Screenshot10"
